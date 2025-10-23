@@ -117,7 +117,7 @@ async function carregarLivrosDjango() {
                 <div class="bookmark"></div>
                 <div class="book-cover">
                     <img src="${capaUrl}" alt="${livro.titulo}" 
-                         onerror="this.onerror=null; this.src='${placeholderUrl}'" 
+                         data-fallback="${placeholderUrl}"
                          style="opacity: 1; transition: opacity 0.5s;">
                 </div>
                 <div class="book-info">
@@ -128,6 +128,15 @@ async function carregarLivrosDjango() {
                     <button class="abrir-btn" onclick="event.stopPropagation(); window.location.href='livro.html?id=${livro.id}'">Abrir</button>
                 </div>
             `;
+            
+            // Adicionar onerror após o elemento ser criado
+            const img = card.querySelector('.book-cover img');
+            if (img) {
+                img.onerror = function() {
+                    this.onerror = null;
+                    this.src = this.dataset.fallback;
+                };
+            }
             
             grid.appendChild(card);
         });

@@ -180,10 +180,11 @@ CSRF_TRUSTED_ORIGINS = [
     'https://*.railway.app',  # Permitir domínios do Railway
 ]
 
-# Configuração do WhiteNoise para arquivos estáticos (SIMPLIFICADO)
-# Usar configuração básica para evitar problemas com collectstatic
+# Configuração do WhiteNoise para arquivos estáticos e mídia
 if not DEBUG:
+    # WhiteNoise para servir arquivos estáticos E de mídia em produção
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+    WHITENOISE_ROOT = MEDIA_ROOT  # Servir arquivos de mídia também
 
 # Configuração de Logging para produção
 LOGGING = {
