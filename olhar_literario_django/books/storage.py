@@ -24,7 +24,8 @@ class GitHubStorage(Storage):
         self.github_token = os.environ.get('GITHUB_TOKEN')
         self.github_repo = os.environ.get('GITHUB_REPO', 'vidafacilnohard/olharliterario')
         self.github_branch = 'master'
-        self.base_url = f'https://raw.githubusercontent.com/{self.github_repo}/{self.github_branch}/olhar_literario_django/media/'
+        # Usar JSDelivr como CDN - sem limite de requisições e com cache
+        self.base_url = f'https://cdn.jsdelivr.net/gh/{self.github_repo}@{self.github_branch}/olhar_literario_django/media/'
     
     def _save(self, name, content):
         """
