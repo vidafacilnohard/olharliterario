@@ -26,9 +26,11 @@ urlpatterns = [
     path('', include('books.urls')),
 ]
 
-# Servir arquivos de mídia (uploads)
+# Servir arquivos de mídia (uploads) - SEMPRE, tanto em dev quanto em produção
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Servir arquivos estáticos em desenvolvimento
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     # Servir arquivos estáticos (CSS, JS, imagens estáticas)
     urlpatterns += [
         re_path(r'^(?P<path>.*\.(css|js|png|jpg|jpeg|gif|svg|ico))$', 

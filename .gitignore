@@ -39,7 +39,10 @@ coverage.xml
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-/media
+# Ignorar arquivos grandes de mídia, mas permitir capas de livros
+/media/*
+!/media/.gitkeep
+!/media/book_covers/
 /staticfiles
 .env
 .venv

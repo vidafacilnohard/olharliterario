@@ -154,9 +154,9 @@ STATICFILES_DIRS = [
     BASE_DIR.parent / 'images',  # Pasta images do projeto (capas de livros)
 ]
 
-# Media files (uploads de usuários - fotos de perfil)
+# Media files (uploads de usuários - fotos de perfil e capas de livros)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR.parent / 'images'
+MEDIA_ROOT = BASE_DIR / 'media'  # Pasta media dentro de olhar_literario_django
 
 # Permitir servir arquivos estáticos em desenvolvimento
 # Em produção, use um servidor web (nginx, apache, etc)
