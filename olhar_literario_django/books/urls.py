@@ -3,6 +3,9 @@ from django.views.generic import TemplateView
 from . import views
 
 urlpatterns = [
+    # Health check
+    path('health', views.health_check, name='health'),
+    
     # Página inicial
     path('', views.index_view, name='index'),
     path('index.html', views.index_view, name='index_html'),

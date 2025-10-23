@@ -5,6 +5,7 @@ from django.views.decorators.http import require_http_methods
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password, check_password
 from django.utils import timezone
+from django.conf import settings
 from datetime import timedelta
 import json
 import uuid
@@ -14,6 +15,15 @@ from .models import UserProfile, AuthToken, Comment, Book
 
 # Diretório base para arquivos estáticos
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+
+def health_check(request):
+    """Health check para verificar se o servidor está funcionando"""
+    return JsonResponse({
+        'status': 'ok',
+        'message': 'Django está funcionando!',
+        'debug': settings.DEBUG if hasattr(settings, 'DEBUG') else None
+    })
 
 
 def index_view(request):
