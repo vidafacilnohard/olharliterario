@@ -150,7 +150,8 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # Arquivos estáticos do frontend (HTML, CSS, JS)
 # IMPORTANTE: Não incluir BASE_DIR.parent para evitar loop infinito com staticfiles
 STATICFILES_DIRS = [
-    BASE_DIR.parent / 'images',  # Apenas a pasta images
+    BASE_DIR / 'static',  # Pasta static dentro de olhar_literario_django (CSS, JS, logo)
+    BASE_DIR.parent / 'images',  # Pasta images do projeto (capas de livros)
 ]
 
 # Media files (uploads de usuários - fotos de perfil)
