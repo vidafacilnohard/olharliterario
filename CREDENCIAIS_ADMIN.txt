@@ -1,0 +1,67 @@
+╔════════════════════════════════════════════════════════════════╗
+║                                                                ║
+║              CREDENCIAIS DO ADMINISTRADOR                      ║
+║                   Olhar Literário                              ║
+║                                                                ║
+╚════════════════════════════════════════════════════════════════╝
+
+🔐 ACESSO AO PAINEL ADMINISTRATIVO
+
+URL: http://localhost:8000/admin
+
+Credenciais:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  👤 Usuário:  admin
+  📧 Email:    admin@olharliterario.com
+  🔑 Senha:    admin123
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+📝 OBSERVAÇÕES:
+
+  ✅ Este usuário é criado automaticamente ao iniciar o servidor
+  ✅ Tem acesso total ao painel administrativo
+  ✅ Pode gerenciar usuários, comentários e configurações
+  
+  ⚠️  IMPORTANTE: Em produção, altere a senha!
+
+
+🎯 O QUE VOCÊ PODE FAZER NO ADMIN:
+
+  • Gerenciar usuários e perfis
+  • Visualizar e moderar comentários
+  • Ver estatísticas do sistema
+  • Gerenciar tokens de autenticação
+  • Adicionar/editar/remover dados
+  • Exportar dados
+  • Configurar permissões
+
+
+🔧 PARA ALTERAR A SENHA:
+
+  1. Acesse http://localhost:8000/admin
+  2. Faça login com as credenciais acima
+  3. Clique em "Mudar senha" no canto superior direito
+  
+  Ou via terminal:
+  cd olhar_literario_django
+  python manage.py changepassword admin
+
+
+👥 PARA CRIAR OUTROS ADMINISTRADORES:
+
+  Via terminal:
+  cd olhar_literario_django
+  python manage.py createsuperuser
+  
+  Ou pelo painel admin:
+  http://localhost:8000/admin/auth/user/add/
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Desenvolvido com ❤️ para Olhar Literário
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

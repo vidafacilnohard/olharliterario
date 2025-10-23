@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Olhar Literário - Sua Biblioteca Online</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Olhar Literário - Sua Biblioteca Online</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <!-- Logo -->
+                <div class="logo">
+                    <a href="index.html" style="display: flex; align-items: center; text-decoration: none;">
+                        <img src="logo.png" alt="Olhar Literário" style="cursor: pointer;">
+                    </a>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="search-container">
+                    <div class="search-box">
+                        <svg class="search-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="11" cy="11" r="7" stroke="#ff8b7e" stroke-width="2"/>
+                            <path d="M20 20L17 17" stroke="#ff8b7e" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <input type="text" placeholder="Busque por título, autor e editora..." class="search-input">
+                        <div class="search-dropdown">
+                            <button class="dropdown-btn" onclick="toggleSearchDropdown()">
+                                livros
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                            <div class="dropdown-menu" id="searchDropdown">
+                                <a href="#" onclick="selectSearchOption('livros')">livros</a>
+                                <a href="#" onclick="selectSearchOption('autores')">autores</a>
+                                <a href="#" onclick="selectSearchOption('editoras')">editoras</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="nav">
+                    <div class="nav-dropdown">
+                        <button class="nav-btn explorar-btn" onclick="window.location.href='index.html'">
+                            Início
+                        </button>
+                        <div class="dropdown-menu" id="explorarDropdown">
+                            <a href="#" onclick="explorar('generos')">Gêneros</a>
+                            <a href="#" onclick="explorar('lancamentos')">Lançamentos</a>
+                            <a href="#" onclick="explorar('mais-vendidos')">Mais Vendidos</a>
+                            <a href="#" onclick="explorar('recomendados')">Recomendados</a>
+                        </div>
+                    </div>
+                    <button class="nav-btn biblioteca-btn" onclick="window.location.href='biblioteca.html'">
+                        📚 Biblioteca
+                    </button>
+                    <!-- Botão de Login (visível quando não logado) -->
+                    <button class="nav-btn entrar-btn" id="btnLogin" onclick="abrirLogin()" style="display: none;">
+                        Entrar
+                    </button>
+                    <!-- Dropdown de Perfil (visível quando logado) -->
+                    <div class="nav-dropdown" id="dropdownPerfil" style="display: none;">
+                        <button class="nav-btn entrar-btn" onclick="togglePerfilDropdown()">
+                            Perfil
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                        </button>
+                        <div class="dropdown-menu" id="perfilDropdown">
+                            <a href="perfil.html">👤 Perfil</a>
+                            <a href="#" id="btnAdicionarLivro" style="display: none;" onclick="window.location.href='/admin/books/book/add/'">➕ Adicionar Livro</a>
+                            <a href="#" onclick="fazerLogout()">🚪 Sair</a>
+                        </div>
+                    </div>
+                    <button class="chat-btn" onclick="abrirChat()">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <circle cx="16" cy="16" r="14" stroke="#ff8b7e" stroke-width="2"/>
+                            <circle cx="10" cy="14" r="1.5" fill="#ff8b7e"/>
+                            <circle cx="16" cy="14" r="1.5" fill="#ff8b7e"/>
+                            <circle cx="22" cy="14" r="1.5" fill="#ff8b7e"/>
+                        </svg>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Banner: interactive mini-books (favorites) -->
+    <section class="banner">
+        <div class="banner-image-container">
+            <div id="bannerMiniBooks" class="banner-mini-grid" aria-live="polite"></div>
+        </div>
+    </section>
+
+    <!-- Book Modal (opens when user clicks a mini-book) -->
+    <div id="bookModal" class="modal">
+        <div class="modal-content book-modal-content">
+            <span class="close" onclick="fecharModal('bookModal')">&times;</span>
+            <div class="book-modal-body">
+                <div class="book-view">
+                    <div class="book-cover-large">
+                        <img id="modalBookImg" src="" alt="Capa do Livro">
+                    </div>
+                    <div class="book-info-modal">
+                        <h3 id="modalBookTitle"></h3>
+                        <p id="modalBookDesc">Descrição não disponível.</p>
+                    </div>
+                </div>
+                <div class="book-open-controls">
+                    <button class="btn-primary" id="openBookBtn">Abrir Livro</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Books Section -->
+    <section class="featured-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Livros em destaque</h2>
+                <a href="biblioteca.html" class="ver-mais-btn">
+                    Ver mais
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M7 4L13 10L7 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </a>
+            </div>
+
+            <div class="books-grid" id="booksGrid">
+                <!-- Os livros em destaque serão carregados automaticamente do Django -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Sobre</h3>
+                    <ul>
+                        <li><a href="#" onclick="navegarPara('sobre')">Quem somos</a></li>
+                        <li><a href="#" onclick="navegarPara('contato')">Contato</a></li>
+                        <li><a href="#" onclick="navegarPara('termos')">Termos de uso</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Categorias</h3>
+                    <ul>
+                        <li><a href="#" onclick="navegarPara('ficcao')">Ficção</a></li>
+                        <li><a href="#" onclick="navegarPara('nao-ficcao')">Não-ficção</a></li>
+                        <li><a href="#" onclick="navegarPara('romance')">Romance</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Redes Sociais</h3>
+                    <ul>
+                        <li><a href="#" onclick="abrirRedeSocial('instagram')">Instagram</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Olhar Literário. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal de Login -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal('loginModal')">&times;</span>
+            <h2>Entrar</h2>
+            <form onsubmit="fazerLogin(event)">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="senha">Senha</label>
+                    <input type="password" id="senha" name="senha" required>
+                </div>
+                <button type="submit" class="btn-primary">Entrar</button>
+                <p class="form-link">Não tem conta? <a href="#" onclick="trocarModal('loginModal', 'cadastroModal')">Cadastre-se</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Cadastro -->
+    <div id="cadastroModal" class="modal">
+        <div class="modal-content cadastro-modal">
+            <span class="close" onclick="fecharModal('cadastroModal')">&times;</span>
+            <h2>Cadastrar</h2>
+            <form onsubmit="fazerCadastro(event)" id="formCadastro">
+                <div class="form-group">
+                    <label for="nome">Nome Completo</label>
+                    <input type="text" id="nome" name="nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="emailCadastro">Email</label>
+                    <input type="email" id="emailCadastro" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="dataNascimentoCadastro">Data de Nascimento</label>
+                    <input type="date" id="dataNascimentoCadastro" name="dataNascimento" required max="">
+                </div>
+                <div class="form-group">
+                    <label for="senhaCadastro">Senha (mínimo 6 caracteres)</label>
+                    <input type="password" id="senhaCadastro" name="senha" minlength="6" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmarSenhaCadastro">Confirmar Senha</label>
+                    <input type="password" id="confirmarSenhaCadastro" name="confirmarSenha" minlength="6" required>
+                    <span class="senha-feedback" id="senhaFeedback"></span>
+                </div>
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="aceitarTermos" name="aceitarTermos" required>
+                        <span class="checkbox-text">
+                            Li e aceito os <a href="#" onclick="abrirTermos(); return false;">Termos de Uso</a> e a 
+                            <a href="#" onclick="abrirPrivacidade(); return false;">Política de Privacidade</a>
+                        </span>
+                    </label>
+                </div>
+                <button type="submit" class="btn-primary">Cadastrar</button>
+                <p class="form-link">Já tem conta? <a href="#" onclick="trocarModal('cadastroModal', 'loginModal')">Entre</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Comentário -->
+    <div id="comentarioModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal('comentarioModal')">&times;</span>
+            <h2>Comentar sobre <span id="livroTitulo"></span></h2>
+            <form onsubmit="enviarComentario(event)">
+                <div class="form-group">
+                    <label for="comentario">Seu comentário</label>
+                    <textarea id="comentario" name="comentario" rows="5" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="avaliacao">Avaliação</label>
+                    <div class="rating">
+                        <span class="star" onclick="setRating(1)">★</span>
+                        <span class="star" onclick="setRating(2)">★</span>
+                        <span class="star" onclick="setRating(3)">★</span>
+                        <span class="star" onclick="setRating(4)">★</span>
+                        <span class="star" onclick="setRating(5)">★</span>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">Enviar Comentário</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Perfil -->
+    <div id="perfilModal" class="modal">
+        <div class="modal-content perfil-modal">
+            <span class="close" onclick="fecharModal('perfilModal')">&times;</span>
+            <h2>Meu Perfil</h2>
+            
+            <div class="perfil-container">
+                <!-- Foto de Perfil -->
+                <div class="perfil-foto-section">
+                    <div class="perfil-foto-wrapper">
+                        <img id="perfilFoto" src="https://via.placeholder.com/150/ff8b7e/ffffff?text=Usuário" alt="Foto de Perfil" class="perfil-foto">
+                        <button type="button" class="btn-alterar-foto" onclick="document.getElementById('inputFoto').click()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Alterar Foto
+                        </button>
+                        <input type="file" id="inputFoto" accept="image/*" style="display: none;" onchange="alterarFotoPerfil(event)">
+                    </div>
+                </div>
+
+                <!-- Formulário de Dados -->
+                <form onsubmit="salvarPerfil(event)" class="perfil-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="perfilNome">Nome Completo</label>
+                            <input type="text" id="perfilNome" name="nome" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="perfilEmail">Email</label>
+                            <input type="email" id="perfilEmail" name="email" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="perfilDataNascimento">Data de Nascimento</label>
+                            <input type="date" id="perfilDataNascimento" name="dataNascimento">
+                        </div>
+                        <div class="form-group">
+                            <label for="perfilTelefone">Telefone</label>
+                            <input type="tel" id="perfilTelefone" name="telefone" placeholder="(00) 00000-0000">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="perfilBio">Biografia</label>
+                        <textarea id="perfilBio" name="bio" rows="3" placeholder="Conte um pouco sobre você e seus gostos literários..."></textarea>
+                    </div>
+
+                    <div class="perfil-separator">
+                        <h3>Alterar Senha</h3>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="perfilSenhaAtual">Senha Atual</label>
+                        <input type="password" id="perfilSenhaAtual" name="senhaAtual" placeholder="Digite sua senha atual">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="perfilNovaSenha">Nova Senha</label>
+                            <input type="password" id="perfilNovaSenha" name="novaSenha" placeholder="Digite a nova senha">
+                        </div>
+                        <div class="form-group">
+                            <label for="perfilConfirmarSenha">Confirmar Nova Senha</label>
+                            <input type="password" id="perfilConfirmarSenha" name="confirmarSenha" placeholder="Confirme a nova senha">
+                        </div>
+                    </div>
+
+                    <div class="perfil-buttons">
+                        <button type="button" class="btn-secondary" onclick="fecharModal('perfilModal')">Cancelar</button>
+                        <button type="submit" class="btn-primary">Salvar Alterações</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

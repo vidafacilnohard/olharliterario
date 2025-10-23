@@ -1,0 +1,175 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+Script de comparação entre Flask e Django
+Mostra as diferenças e vantagens do Django
+"""
+
+print("=" * 70)
+print("COMPARAÇÃO: Flask vs Django - Olhar Literário")
+print("=" * 70)
+print()
+
+print("📊 ESTRUTURA DE DADOS")
+print("-" * 70)
+print()
+print("FLASK (SQLite manual):")
+print("  ❌ SQL manual (CREATE TABLE, INSERT, SELECT)")
+print("  ❌ Sem validação automática")
+print("  ❌ Sem migrações (alterações difíceis)")
+print("  ❌ Sem painel admin")
+print()
+print("DJANGO (ORM + Admin):")
+print("  ✅ Models Python (orientado a objetos)")
+print("  ✅ Validação automática de dados")
+print("  ✅ Migrações automáticas (makemigrations/migrate)")
+print("  ✅ Painel admin completo e customizável")
+print()
+
+print("🔐 AUTENTICAÇÃO")
+print("-" * 70)
+print()
+print("FLASK:")
+print("  ❌ Sistema de usuários manual")
+print("  ❌ Hash de senha implementado manualmente")
+print("  ❌ Gestão de tokens manual")
+print("  ❌ Sem controle de permissões")
+print()
+print("DJANGO:")
+print("  ✅ Sistema de usuários integrado")
+print("  ✅ Hash de senha automático e seguro")
+print("  ✅ Tokens gerenciados pelo ORM")
+print("  ✅ Sistema de permissões e grupos")
+print()
+
+print("📝 COMENTÁRIOS E REVIEWS")
+print("-" * 70)
+print()
+print("FLASK:")
+print("""
+    cur.execute('''INSERT INTO comments 
+                   (user_id, book_title, comment, rating, created_at) 
+                   VALUES (?,?,?,?,?)''', 
+                (user_id, title, text, rating, datetime.now()))
+""")
+print()
+print("DJANGO:")
+print("""
+    Comment.objects.create(
+        user=user,
+        book_title=title,
+        comment=text,
+        rating=rating
+    )
+""")
+print("  ✅ Mais limpo e pythônico")
+print("  ✅ Validação automática")
+print("  ✅ Timestamps automáticos")
+print()
+
+print("🔍 CONSULTAS")
+print("-" * 70)
+print()
+print("FLASK:")
+print("""
+    cur.execute('''SELECT c.*, u.nome 
+                   FROM comments c 
+                   LEFT JOIN users u ON u.id=c.user_id 
+                   WHERE book_title=? 
+                   ORDER BY created_at DESC''', (book,))
+""")
+print()
+print("DJANGO:")
+print("""
+    Comment.objects.filter(book_title=book)\\
+                   .select_related('user')\\
+                   .order_by('-created_at')
+""")
+print("  ✅ Mais legível")
+print("  ✅ Proteção contra SQL injection")
+print("  ✅ Cache automático")
+print()
+
+print("🎨 PAINEL ADMIN")
+print("-" * 70)
+print()
+print("FLASK:")
+print("  ❌ Não existe (precisa implementar do zero)")
+print()
+print("DJANGO:")
+print("  ✅ Admin automático em /admin")
+print("  ✅ CRUD completo para todos os models")
+print("  ✅ Filtros, busca, paginação")
+print("  ✅ Customizável com poucas linhas")
+print()
+
+print("📈 ESCALABILIDADE")
+print("-" * 70)
+print()
+print("FLASK:")
+print("  ⚠️ SQLite (limitado a ~100k registros)")
+print("  ⚠️ Difícil migrar para PostgreSQL/MySQL")
+print("  ⚠️ Sem cache integrado")
+print()
+print("DJANGO:")
+print("  ✅ Suporta PostgreSQL, MySQL, Oracle, etc")
+print("  ✅ Migração de banco fácil (muda 3 linhas)")
+print("  ✅ Sistema de cache integrado")
+print("  ✅ Suporte a múltiplos bancos")
+print()
+
+print("🧪 TESTES")
+print("-" * 70)
+print()
+print("FLASK:")
+print("  ⚠️ Testes manuais com unittest")
+print("  ⚠️ Precisa mockar banco de dados")
+print()
+print("DJANGO:")
+print("  ✅ TestCase com banco de teste automático")
+print("  ✅ Client de teste integrado")
+print("  ✅ Fixtures e factories")
+print()
+
+print("📦 TAMANHO DO CÓDIGO")
+print("-" * 70)
+print()
+print("FLASK (server.py): ~250 linhas")
+print("  - SQL manual")
+print("  - Validações manuais")
+print("  - Gestão de tokens manual")
+print()
+print("DJANGO (models + views): ~200 linhas")
+print("  + Admin grátis")
+print("  + Migrações automáticas")
+print("  + Sistema de usuários completo")
+print()
+
+print("💰 CUSTO DE MANUTENÇÃO")
+print("-" * 70)
+print()
+print("FLASK:")
+print("  - Adicionar campo: SQL ALTER TABLE manual + código")
+print("  - Mudar validação: Revisar todo o código")
+print("  - Novo banco: Reescrever queries")
+print()
+print("DJANGO:")
+print("  - Adicionar campo: 1 linha no model + migrate")
+print("  - Mudar validação: 1 linha no model")
+print("  - Novo banco: 3 linhas no settings.py")
+print()
+
+print("🎯 CONCLUSÃO")
+print("=" * 70)
+print()
+print("O Django oferece:")
+print("  ✅ Menos código")
+print("  ✅ Mais segurança")
+print("  ✅ Melhor manutenibilidade")
+print("  ✅ Painel admin profissional")
+print("  ✅ Escalabilidade")
+print("  ✅ Comunidade e documentação")
+print()
+print("Perfeito para projetos que crescerão! 🚀")
+print()
+print("=" * 70)
