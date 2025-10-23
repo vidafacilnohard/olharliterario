@@ -264,6 +264,14 @@ Antes de considerar concluído, verifique:
 ### ❌ Erro: "DisallowedHost"
 **Solução:** O domínio do Railway já está em `ALLOWED_HOSTS = ['*']`. Se continuar, adicione o domínio específico.
 
+### ❌ Erro: "OSError: [Errno 36] File name too long" (collectstatic loop infinito)
+**Solução:** Este erro já foi corrigido! O problema era que `STATICFILES_DIRS` incluía a pasta raiz que contém `staticfiles`, criando um loop. A correção já está no último commit do GitHub. Se você conectou o Railway antes da correção, faça um redeploy.
+
+**Como forçar redeploy:**
+1. No Railway, vá na aplicação Django
+2. Aba "Settings" → "Service" → "Redeploy"
+3. Aguarde o novo deploy com o código corrigido
+
 ### ❌ Site abre mas não carrega estilos
 **Solução:** Execute:
 ```bash
