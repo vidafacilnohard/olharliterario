@@ -171,18 +171,25 @@ def api_login(request):
     """Faz login do usuário"""
     try:
         data = json.loads(request.body)
-    except json.JSONDecodeError:
+        print(f"Login attempt - Data received: {data}")
+    except json.JSONDecodeError as e:
+        print(f"Login error - Invalid JSON: {e}")
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
     
     email = data.get('email')
     senha = data.get('senha')
     
+    print(f"Login attempt - Email: {email}, Password provided: {'Yes' if senha else 'No'}")
+    
     if not all([email, senha]):
-        return JsonResponse({'error': 'Missing fields'}, status=400)
+        print(f"Login error - Missing fields. Email: {email}, Senha: {'provided' if senha else 'missing'}")
+        return JsonResponse({'error': 'Email e senha são obrigatórios'}, status=400)
     
     try:
         user = User.objects.get(email=email)
+        print(f"User found: {user.username}, checking password...")
         if check_password(senha, user.password):
+            print(f"Password correct, creating token...")
             # Criar novo token
             token = AuthToken.objects.create(user=user)
             
@@ -195,9 +202,11 @@ def api_login(request):
                 'token': token.token
             })
         else:
-            return JsonResponse({'error': 'Invalid credentials'}, status=400)
+            print(f"Password incorrect for user: {user.username}")
+            return JsonResponse({'error': 'Email ou senha incorretos'}, status=400)
     except User.DoesNotExist:
-        return JsonResponse({'error': 'Invalid credentials'}, status=400)
+        print(f"User not found with email: {email}")
+        return JsonResponse({'error': 'Email ou senha incorretos'}, status=400)
 
 
 @csrf_exempt
