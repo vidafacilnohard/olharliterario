@@ -73,7 +73,20 @@ async function carregarLivrosDjango() {
                 }
             });
             
-            const capaUrl = livro.capa || 'https://via.placeholder.com/300x450/ff8b7e/ffffff?text=' + encodeURIComponent(livro.titulo);
+            // Tentar usar capa do banco, senão buscar na pasta images/ com nome do arquivo
+            let capaUrl = livro.capa;
+            if (!capaUrl) {
+                // Gerar nome do arquivo baseado no título do livro
+                const nomeArquivo = livro.titulo.toLowerCase()
+                    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remove acentos
+                    .replace(/[^a-z0-9\s-]/g, '') // Remove caracteres especiais
+                    .replace(/\s+/g, '-') // Substitui espaços por hífens
+                    .replace(/-+/g, '-'); // Remove hífens duplicados
+                capaUrl = `images/${nomeArquivo}.jpg`;
+            }
+            // Fallback final para placeholder
+            const placeholderUrl = 'https://via.placeholder.com/300x450/ff8b7e/ffffff?text=' + encodeURIComponent(livro.titulo);
+            
             const sinopse = livro.sinopse || 'Descrição não disponível.';
             const autor = livro.autor || 'Autor Desconhecido';
             
@@ -95,7 +108,7 @@ async function carregarLivrosDjango() {
             card.innerHTML = `
                 <div class="bookmark"></div>
                 <div class="book-cover">
-                    <img src="${capaUrl}" alt="${livro.titulo}" onerror="this.src='https://via.placeholder.com/300x450/ff8b7e/ffffff?text=${encodeURIComponent(livro.titulo)}'">
+                    <img src="${capaUrl}" alt="${livro.titulo}" onerror="this.onerror=null; this.src='${placeholderUrl}'">
                 </div>
                 <div class="book-info">
                     <h3 class="book-title">${livro.titulo}</h3>
