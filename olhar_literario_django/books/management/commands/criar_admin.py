@@ -1,5 +1,5 @@
 """
-Comando customizado do Django para criar um superusuário automaticamente
+Comando customizado do Django para criar um superusuário automaticamente  
 Uso: python manage.py criar_admin
 """
 
@@ -20,38 +20,27 @@ class Command(BaseCommand):
         
         username = 'admin'
         email = 'admin@olharliterario.com'
-        password = 'Admin@2025!Olhar'
+        password = 'admin123'  # Senha simples para teste
         
         try:
-            # Verific se já existe
-            if User.objects.filter(username=username).exists():
-                user = User.objects.get(username=username)
-                self.stdout.write(self.style.WARNING('⚠️  Usuário já existe!'))
-                self.stdout.write(f'👤 Username: {user.username}')
-                self.stdout.write(f'📧 Email: {user.email}')
-                self.stdout.write(f'🔐 É superusuário: {user.is_superuser}')
-                
-                # Atualizar para garantir que é superusuário
-                user.is_superuser = True
-                user.is_staff = True
-                user.set_password(password)
-                user.save()
-                self.stdout.write(self.style.SUCCESS('✅ Atualizado para superusuário!'))
-            else:
-                # Criar novo superusuário
-                user = User.objects.create_superuser(
-                    username=username,
-                    email=email,
-                    password=password
-                )
-                self.stdout.write(self.style.SUCCESS('=' * 60))
-                self.stdout.write(self.style.SUCCESS('🎉 SUPERUSUÁRIO CRIADO COM SUCESSO!'))
-                self.stdout.write(self.style.SUCCESS('=' * 60))
-                self.stdout.write(f'👤 Username: {username}')
-                self.stdout.write(f'📧 Email: {email}')
-                self.stdout.write(f'🔑 Senha: {password}')
-                self.stdout.write(self.style.SUCCESS('=' * 60))
+            # SEMPRE deletar usuário antigo e criar novo
+            deleted_count = User.objects.filter(username=username).delete()[0]
+            if deleted_count > 0:
+                self.stdout.write(self.style.WARNING(f'🗑️  {deleted_count} usuário(s) admin antigo(s) deletado(s)'))
             
+            # Criar novo superusuário
+            user = User.objects.create_superuser(
+                username=username,
+                email=email,
+                password=password
+            )
+            self.stdout.write(self.style.SUCCESS('=' * 60))
+            self.stdout.write(self.style.SUCCESS('🎉 SUPERUSUÁRIO CRIADO COM SUCESSO!'))
+            self.stdout.write(self.style.SUCCESS('=' * 60))
+            self.stdout.write(f'👤 Username: {username}')
+            self.stdout.write(f'📧 Email: {email}')
+            self.stdout.write(f'🔑 Senha: {password}')
+            self.stdout.write(self.style.SUCCESS('=' * 60))
             self.stdout.write(self.style.SUCCESS('🌐 Acesse: https://olharliterario-production.up.railway.app/admin'))
                 
         except Exception as e:
