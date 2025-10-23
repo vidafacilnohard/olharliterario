@@ -39,10 +39,7 @@ coverage.xml
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-# Ignorar arquivos grandes de mídia, mas permitir capas de livros
-/media/*
-!/media/.gitkeep
-!/media/book_covers/
+# Permitir capas de livros para GitHub CDN
 /staticfiles
 .env
 .venv
