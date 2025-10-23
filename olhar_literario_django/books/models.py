@@ -62,16 +62,19 @@ class Book(models.Model):
             # Converter link do Google Drive automaticamente
             if 'drive.google.com' in self.capa_url:
                 # Extrair ID do link do Google Drive
+                file_id = None
                 if '/file/d/' in self.capa_url:
                     # Link formato: https://drive.google.com/file/d/ID/view
                     file_id = self.capa_url.split('/file/d/')[1].split('/')[0]
-                    converted_url = f'https://drive.google.com/uc?export=view&id={file_id}'
+                elif 'id=' in self.capa_url:
+                    # Link formato: https://drive.google.com/uc?export=view&id=ID
+                    file_id = self.capa_url.split('id=')[1].split('&')[0]
+                
+                if file_id:
+                    # Usar drive.usercontent.com que é melhor para embed
+                    converted_url = f'https://drive.google.com/thumbnail?id={file_id}&sz=w1000'
                     print(f"[DEBUG] Convertendo link do Google Drive: {self.capa_url} -> {converted_url}")
                     return converted_url
-                elif 'id=' in self.capa_url:
-                    # Já está no formato correto
-                    print(f"[DEBUG] Link do Google Drive já convertido: {self.capa_url}")
-                    return self.capa_url
             print(f"[DEBUG] Retornando capa_url direto: {self.capa_url}")
             return self.capa_url
         print(f"[DEBUG] Livro '{self.titulo}' não tem capa configurada")
