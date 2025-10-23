@@ -3,6 +3,11 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from datetime import timedelta
 import uuid
+from .storage import GitHubMediaStorage
+
+
+# Storage para fazer commit automático no GitHub
+github_storage = GitHubMediaStorage()
 
 
 class Book(models.Model):
@@ -16,7 +21,13 @@ class Book(models.Model):
     isbn = models.CharField(max_length=13, blank=True, null=True, unique=True, verbose_name='ISBN')
     genero = models.CharField(max_length=100, blank=True, null=True, verbose_name='Gênero')
     sinopse = models.TextField(blank=True, null=True, verbose_name='Sinopse')
-    capa = models.ImageField(upload_to='book_covers/', blank=True, null=True, verbose_name='Capa')
+    capa = models.ImageField(
+        upload_to='book_covers/', 
+        blank=True, 
+        null=True, 
+        verbose_name='Capa',
+        storage=github_storage  # Usar storage que faz commit automático
+    )
     paginas = models.IntegerField(blank=True, null=True, verbose_name='Número de Páginas')
     idioma = models.CharField(max_length=50, default='Português', verbose_name='Idioma')
     disponivel = models.BooleanField(default=True, verbose_name='Disponível')
