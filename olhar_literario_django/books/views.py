@@ -111,19 +111,32 @@ def api_register(request):
     try:
         data = json.loads(request.body)
     except json.JSONDecodeError:
-        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+        return JsonResponse({'error': 'JSON inválido'}, status=400)
     
     nome = data.get('nome')
     email = data.get('email')
     senha = data.get('senha')
     data_nascimento = data.get('dataNascimento')
     
-    if not all([nome, email, senha]):
-        return JsonResponse({'error': 'Missing fields'}, status=400)
+    # Validar campos obrigatórios
+    if not nome:
+        return JsonResponse({'error': 'Nome é obrigatório'}, status=400)
+    if not email:
+        return JsonResponse({'error': 'Email é obrigatório'}, status=400)
+    if not senha:
+        return JsonResponse({'error': 'Senha é obrigatória'}, status=400)
+    
+    # Validar email
+    if '@' not in email:
+        return JsonResponse({'error': 'Email inválido'}, status=400)
     
     # Verificar se email já existe
     if User.objects.filter(email=email).exists():
-        return JsonResponse({'error': 'Email already registered'}, status=400)
+        return JsonResponse({'error': 'Este email já está cadastrado'}, status=400)
+    
+    # Verificar se username (email) já existe
+    if User.objects.filter(username=email).exists():
+        return JsonResponse({'error': 'Este email já está cadastrado'}, status=400)
     
     # Criar usuário
     try:
@@ -152,7 +165,7 @@ def api_register(request):
             'token': token.token
         })
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        return JsonResponse({'error': f'Erro ao criar usuário: {str(e)}'}, status=500)
 
 
 @csrf_exempt
