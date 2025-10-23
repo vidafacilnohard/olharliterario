@@ -1,18 +1,22 @@
 """
 Sistema de upload automático para GitHub usando a API
 Quando uma capa é enviada pelo Django admin, faz commit via API do GitHub
+e retorna a URL do arquivo no GitHub para servir diretamente (CDN)
 """
 import os
 import base64
 import requests
 from django.conf import settings
-from django.core.files.storage import FileSystemStorage
+from django.core.files.storage import Storage
+from django.core.files.base import ContentFile
 
 
-class GitHubStorage(FileSystemStorage):
+class GitHubStorage(Storage):
     """
-    Storage customizado que faz commit automático no GitHub via API
-    quando um arquivo é salvo
+    Storage customizado que:
+    1. Faz upload direto para o GitHub via API
+    2. Retorna URL do GitHub para servir o arquivo (usa GitHub como CDN)
+    3. Não salva arquivos localmente (Railway não persiste uploads)
     """
     
     def __init__(self, *args, **kwargs):
@@ -20,27 +24,29 @@ class GitHubStorage(FileSystemStorage):
         self.github_token = os.environ.get('GITHUB_TOKEN')
         self.github_repo = os.environ.get('GITHUB_REPO', 'vidafacilnohard/olharliterario')
         self.github_branch = 'master'
+        self.base_url = f'https://raw.githubusercontent.com/{self.github_repo}/{self.github_branch}/olhar_literario_django/media/'
     
     def _save(self, name, content):
         """
-        Salva o arquivo localmente e faz commit automático no GitHub via API
+        Salva o arquivo direto no GitHub e retorna o caminho
         """
-        # Salvar o arquivo normalmente
-        full_path = super()._save(name, content)
+        # Ler conteúdo
+        content.seek(0)
+        file_content = content.read()
         
-        # Fazer commit via API do GitHub (só em produção e se tiver token)
-        if not settings.DEBUG and self.github_token:
-            # Ler o conteúdo do arquivo salvo
-            with open(self.path(full_path), 'rb') as f:
-                file_content = f.read()
-            
-            self._github_commit(full_path, file_content)
+        # Fazer upload para o GitHub
+        if self.github_token:
+            success = self._github_upload(name, file_content)
+            if not success:
+                print(f"⚠️ Falha ao fazer upload para o GitHub: {name}")
+        else:
+            print(f"⚠️ GITHUB_TOKEN não configurado. Configure para uploads automáticos.")
         
-        return full_path
+        return name
     
-    def _github_commit(self, file_path, content):
+    def _github_upload(self, file_path, content):
         """
-        Faz commit do arquivo no GitHub via API
+        Faz upload do arquivo no GitHub via API
         """
         try:
             # Caminho relativo no repositório
@@ -77,21 +83,75 @@ class GitHubStorage(FileSystemStorage):
             response = requests.put(url, json=data, headers=headers)
             
             if response.status_code in [200, 201]:
-                print(f"✅ Arquivo {file_path} commitado no GitHub via API!")
+                print(f"✅ Arquivo {file_path} enviado para o GitHub!")
+                print(f"🌐 URL: {self.base_url}{file_path}")
+                return True
             else:
-                print(f"⚠️ Erro ao fazer commit no GitHub: {response.status_code}")
+                print(f"⚠️ Erro ao fazer upload para o GitHub: {response.status_code}")
                 print(f"   Resposta: {response.text}")
+                return False
                 
         except Exception as e:
-            print(f"⚠️ Erro ao fazer commit via API do GitHub: {e}")
+            print(f"⚠️ Erro ao fazer upload via API do GitHub: {e}")
+            return False
+    
+    def url(self, name):
+        """
+        Retorna a URL do arquivo no GitHub (CDN público)
+        """
+        return f"{self.base_url}{name}"
+    
+    def exists(self, name):
+        """
+        Verifica se arquivo existe no GitHub
+        """
+        if not self.github_token:
+            return False
+            
+        repo_path = f"olhar_literario_django/media/{name}"
+        url = f"https://api.github.com/repos/{self.github_repo}/contents/{repo_path}"
+        
+        headers = {
+            'Authorization': f'token {self.github_token}',
+            'Accept': 'application/vnd.github.v3+json'
+        }
+        
+        response = requests.get(url, headers=headers)
+        return response.status_code == 200
+    
+    def delete(self, name):
+        """
+        Deleta arquivo do GitHub
+        """
+        if not self.github_token:
+            return
+            
+        repo_path = f"olhar_literario_django/media/{name}"
+        url = f"https://api.github.com/repos/{self.github_repo}/contents/{repo_path}"
+        
+        headers = {
+            'Authorization': f'token {self.github_token}',
+            'Accept': 'application/vnd.github.v3+json'
+        }
+        
+        # Pegar SHA do arquivo
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            sha = response.json().get('sha')
+            
+            # Deletar arquivo
+            data = {
+                'message': f'AUTO: Deletar - {os.path.basename(name)}',
+                'sha': sha,
+                'branch': self.github_branch
+            }
+            
+            requests.delete(url, json=data, headers=headers)
 
 
 class GitHubMediaStorage(GitHubStorage):
     """
     Storage específico para arquivos de mídia (capas de livros, fotos de perfil)
+    Usa GitHub como CDN - arquivos são servidos direto do repositório
     """
-    
-    def __init__(self, *args, **kwargs):
-        kwargs['location'] = settings.MEDIA_ROOT
-        kwargs['base_url'] = settings.MEDIA_URL
-        super().__init__(*args, **kwargs)
+    pass
