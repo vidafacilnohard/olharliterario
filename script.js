@@ -36,6 +36,24 @@ async function apiFetch(path, options = {}, skipJsonHeader = false) {
     }
 }
 
+// Função auxiliar para obter URL da capa com fallback inteligente
+function obterUrlCapa(livro) {
+    // Se tem capa no banco, usa ela
+    if (livro.capa) {
+        return livro.capa;
+    }
+    
+    // Gerar nome do arquivo baseado no título do livro
+    const nomeArquivo = livro.titulo.toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remove acentos
+        .replace(/[^a-z0-9\s-]/g, '') // Remove caracteres especiais
+        .replace(/\s+/g, '-') // Substitui espaços por hífens
+        .replace(/-+/g, '-') // Remove hífens duplicados
+        .trim();
+    
+    return `images/${nomeArquivo}.jpg`;
+}
+
 // Carregar livros do banco de dados Django
 async function carregarLivrosDjango() {
     try {
@@ -73,18 +91,8 @@ async function carregarLivrosDjango() {
                 }
             });
             
-            // Tentar usar capa do banco, senão buscar na pasta images/ com nome do arquivo
-            let capaUrl = livro.capa;
-            if (!capaUrl) {
-                // Gerar nome do arquivo baseado no título do livro
-                const nomeArquivo = livro.titulo.toLowerCase()
-                    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remove acentos
-                    .replace(/[^a-z0-9\s-]/g, '') // Remove caracteres especiais
-                    .replace(/\s+/g, '-') // Substitui espaços por hífens
-                    .replace(/-+/g, '-'); // Remove hífens duplicados
-                capaUrl = `images/${nomeArquivo}.jpg`;
-            }
-            // Fallback final para placeholder
+            // Obter URL da capa
+            const capaUrl = obterUrlCapa(livro);
             const placeholderUrl = 'https://via.placeholder.com/300x450/ff8b7e/ffffff?text=' + encodeURIComponent(livro.titulo);
             
             const sinopse = livro.sinopse || 'Descrição não disponível.';
@@ -108,7 +116,9 @@ async function carregarLivrosDjango() {
             card.innerHTML = `
                 <div class="bookmark"></div>
                 <div class="book-cover">
-                    <img src="${capaUrl}" alt="${livro.titulo}" onerror="this.onerror=null; this.src='${placeholderUrl}'">
+                    <img src="${capaUrl}" alt="${livro.titulo}" 
+                         onerror="this.onerror=null; this.src='${placeholderUrl}'" 
+                         style="opacity: 1; transition: opacity 0.5s;">
                 </div>
                 <div class="book-info">
                     <h3 class="book-title">${livro.titulo}</h3>
