@@ -28,14 +28,32 @@ def health_check(request):
 
 def index_view(request):
     """Serve a página inicial do site"""
-    index_path = BASE_DIR / 'index.html'
-    if not index_path.exists():
+    try:
+        index_path = BASE_DIR / 'index.html'
+        print(f"DEBUG: Tentando acessar: {index_path}")
+        print(f"DEBUG: Arquivo existe? {index_path.exists()}")
+        print(f"DEBUG: BASE_DIR = {BASE_DIR}")
+        
+        if not index_path.exists():
+            # Listar arquivos no diretório para debug
+            import os
+            files = os.listdir(BASE_DIR)
+            return JsonResponse({
+                'error': 'index.html não encontrado',
+                'path': str(index_path),
+                'base_dir': str(BASE_DIR),
+                'files_in_base_dir': files[:20],  # Primeiros 20 arquivos
+                'tip': 'Certifique-se de que o arquivo index.html está na pasta raiz do projeto'
+            }, status=404)
+        
+        with open(index_path, 'rb') as f:
+            return FileResponse(f, content_type='text/html')
+    except Exception as e:
+        print(f"ERROR: {str(e)}")
         return JsonResponse({
-            'error': 'index.html não encontrado',
-            'path': str(index_path),
-            'tip': 'Certifique-se de que o arquivo index.html está na pasta raiz do projeto'
-        }, status=404)
-    return FileResponse(open(index_path, 'rb'), content_type='text/html')
+            'error': str(e),
+            'type': type(e).__name__
+        }, status=500)
 
 
 def livro_view(request):
