@@ -1,0 +1,11 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS"
+  },
+  "deploy": {
+    "startCommand": "cd olhar_literario_django && python manage.py collectstatic --noinput && python manage.py migrate && gunicorn olhar_literario_django.wsgi:application --bind 0.0.0.0:$PORT",
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+  }
+}
