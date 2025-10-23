@@ -57,7 +57,7 @@ ROOT_URLCONF = 'olhar_literario_django.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR.parent / 'templates'],  # Pasta templates na raiz
+        'DIRS': [BASE_DIR / 'templates'],  # Pasta templates dentro de olhar_literario_django
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

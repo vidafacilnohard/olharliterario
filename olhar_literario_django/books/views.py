@@ -28,87 +28,32 @@ def health_check(request):
 
 def index_view(request):
     """Serve a página inicial do site"""
-    try:
-        index_path = BASE_DIR / 'index.html'
-        print(f"DEBUG: Tentando acessar: {index_path}")
-        print(f"DEBUG: Arquivo existe? {index_path.exists()}")
-        print(f"DEBUG: BASE_DIR = {BASE_DIR}")
-        
-        if not index_path.exists():
-            # Listar arquivos no diretório para debug
-            import os
-            files = os.listdir(BASE_DIR)
-            return JsonResponse({
-                'error': 'index.html não encontrado',
-                'path': str(index_path),
-                'base_dir': str(BASE_DIR),
-                'files_in_base_dir': files[:20],  # Primeiros 20 arquivos
-                'tip': 'Certifique-se de que o arquivo index.html está na pasta raiz do projeto'
-            }, status=404)
-        
-        with open(index_path, 'rb') as f:
-            return FileResponse(f, content_type='text/html')
-    except Exception as e:
-        print(f"ERROR: {str(e)}")
-        return JsonResponse({
-            'error': str(e),
-            'type': type(e).__name__
-        }, status=500)
+    return render(request, 'index.html')
 
 
 def livro_view(request):
     """Serve a página de detalhes do livro"""
-    livro_path = BASE_DIR / 'livro.html'
-    if not livro_path.exists():
-        return JsonResponse({
-            'error': 'livro.html não encontrado',
-            'path': str(livro_path)
-        }, status=404)
-    return FileResponse(open(livro_path, 'rb'), content_type='text/html')
+    return render(request, 'livro.html')
 
 
 def biblioteca_view(request):
     """Serve a página da biblioteca"""
-    biblioteca_path = BASE_DIR / 'biblioteca.html'
-    if not biblioteca_path.exists():
-        return JsonResponse({
-            'error': 'biblioteca.html não encontrado',
-            'path': str(biblioteca_path)
-        }, status=404)
-    return FileResponse(open(biblioteca_path, 'rb'), content_type='text/html')
+    return render(request, 'biblioteca.html')
 
 
 def perfil_view(request):
     """Serve a página de perfil do usuário"""
-    perfil_path = BASE_DIR / 'perfil.html'
-    if not perfil_path.exists():
-        return JsonResponse({
-            'error': 'perfil.html não encontrado',
-            'path': str(perfil_path)
-        }, status=404)
-    return FileResponse(open(perfil_path, 'rb'), content_type='text/html')
+    return render(request, 'perfil.html')
 
 
 def login_view(request):
     """Serve a página de login"""
-    login_path = BASE_DIR / 'login.html'
-    if not login_path.exists():
-        return JsonResponse({
-            'error': 'login.html não encontrado',
-            'path': str(login_path)
-        }, status=404)
-    return FileResponse(open(login_path, 'rb'), content_type='text/html')
+    return render(request, 'login.html')
 
 
 def registro_view(request):
     """Serve a página de registro"""
-    registro_path = BASE_DIR / 'registro.html'
-    if not registro_path.exists():
-        return JsonResponse({
-            'error': 'registro.html não encontrado',
-            'path': str(registro_path)
-        }, status=404)
-    return FileResponse(open(registro_path, 'rb'), content_type='text/html')
+    return render(request, 'registro.html')
 
 
 def get_user_from_token(request):
