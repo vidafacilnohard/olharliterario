@@ -17,6 +17,16 @@ import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Logging de debug para Railway
+print("=" * 50)
+print("🚀 OLHAR LITERÁRIO - INICIANDO DJANGO")
+print("=" * 50)
+print(f"📁 BASE_DIR: {BASE_DIR}")
+print(f"🔑 SECRET_KEY configurada: {'Sim' if os.environ.get('SECRET_KEY') else 'Não (usando fallback)'}")
+print(f"🐛 DEBUG: {os.environ.get('DEBUG', 'True')}")
+print(f"🗄️  DATABASE_URL: {'Configurada ✅' if os.environ.get('DATABASE_URL') else 'Não configurada (usando SQLite)'}")
+print("=" * 50)
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -81,11 +91,17 @@ DATABASE_URL = os.environ.get('DATABASE_URL')
 
 if DATABASE_URL:
     # Produção - PostgreSQL no Railway
+    print(f"🔵 Usando PostgreSQL em produção")
     DATABASES = {
-        'default': dj_database_url.parse(DATABASE_URL)
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
     }
 else:
     # Desenvolvimento - SQLite local
+    print(f"🟡 Usando SQLite local (desenvolvimento)")
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -167,3 +183,37 @@ CSRF_TRUSTED_ORIGINS = [
 # Usar configuração básica para evitar problemas com collectstatic
 if not DEBUG:
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+
+# Configuração de Logging para produção
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+            'propagate': False,
+        },
+    },
+}

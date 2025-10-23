@@ -19,10 +19,27 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 def health_check(request):
     """Health check para verificar se o servidor está funcionando"""
+    from django.db import connection
+    
+    # Testar conexão com banco de dados
+    db_status = "disconnected"
+    db_type = "unknown"
+    try:
+        connection.ensure_connection()
+        db_status = "connected"
+        db_type = connection.settings_dict['ENGINE'].split('.')[-1]
+    except Exception as e:
+        db_status = f"error: {str(e)}"
+    
     return JsonResponse({
         'status': 'ok',
         'message': 'Django está funcionando!',
-        'debug': settings.DEBUG if hasattr(settings, 'DEBUG') else None
+        'debug': settings.DEBUG,
+        'database': {
+            'type': db_type,
+            'status': db_status
+        },
+        'templates_dir': str(settings.BASE_DIR / 'templates')
     })
 
 
