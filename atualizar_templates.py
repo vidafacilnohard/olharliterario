@@ -6,9 +6,13 @@ templates_dir = 'olhar_literario_django/templates'
 
 # Padrões de substituição
 replacements = [
-    (r'href="style\.css"', r'href="{% static \'style.css\' %}"'),
-    (r'src="script\.js"', r'src="{% static \'script.js\' %}"'),
-    (r'src="logo\.png"', r'src="{% static \'logo.png\' %}"'),
+    (r'href="style\.css"', r'href="{% static "style.css" %}"'),
+    (r'src="script\.js"', r'src="{% static "script.js" %}"'),
+    (r'src="logo\.png"', r'src="{% static "logo.png" %}"'),
+    # Corrigir se já tiver aspas simples erradas
+    (r"{% static 'style\.css' %}", r'{% static "style.css" %}'),
+    (r"{% static 'script\.js' %}", r'{% static "script.js" %}'),
+    (r"{% static 'logo\.png' %}", r'{% static "logo.png" %}'),
 ]
 
 # Processar cada arquivo HTML
