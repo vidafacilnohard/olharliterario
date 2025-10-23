@@ -36,6 +36,24 @@ async function apiFetch(path, options = {}, skipJsonHeader = false) {
     }
 }
 
+// Função auxiliar para obter URL da capa com fallback inteligente
+function obterUrlCapa(livro) {
+    // Se tem capa no banco, usa ela
+    if (livro.capa) {
+        return livro.capa;
+    }
+    
+    // Gerar nome do arquivo baseado no título do livro
+    const nomeArquivo = livro.titulo.toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remove acentos
+        .replace(/[^a-z0-9\s-]/g, '') // Remove caracteres especiais
+        .replace(/\s+/g, '-') // Substitui espaços por hífens
+        .replace(/-+/g, '-') // Remove hífens duplicados
+        .trim();
+    
+    return `images/${nomeArquivo}.jpg`;
+}
+
 // Carregar livros do banco de dados Django
 async function carregarLivrosDjango() {
     try {
@@ -73,7 +91,10 @@ async function carregarLivrosDjango() {
                 }
             });
             
-            const capaUrl = livro.capa || 'https://via.placeholder.com/300x450/ff8b7e/ffffff?text=' + encodeURIComponent(livro.titulo);
+            // Obter URL da capa
+            const capaUrl = obterUrlCapa(livro);
+            const placeholderUrl = 'https://via.placeholder.com/300x450/ff8b7e/ffffff?text=' + encodeURIComponent(livro.titulo);
+            
             const sinopse = livro.sinopse || 'Descrição não disponível.';
             const autor = livro.autor || 'Autor Desconhecido';
             
@@ -91,8 +112,6 @@ async function carregarLivrosDjango() {
                 }
                 stars = `<div class="book-rating">${stars} (${livro.total_avaliacoes})</div>`;
             }
-            
-            const placeholderUrl = 'https://via.placeholder.com/300x450/ff8b7e/ffffff?text=' + encodeURIComponent(livro.titulo);
             
             card.innerHTML = `
                 <div class="bookmark"></div>
