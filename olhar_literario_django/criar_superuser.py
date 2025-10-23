@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
 Script para criar superusuário no Railway
-Execute com: railway run python olhar_literario_django/criar_superuser.py
+Executado automaticamente pelo Procfile durante o deploy
 """
 
 import os
@@ -22,41 +22,41 @@ User = get_user_model()
 # Credenciais do superusuário
 username = 'admin'
 email = 'admin@olharliterario.com'
-password = 'Admin@2025!Olhar'
+password = 'admin123'  # SENHA SIMPLES PARA TESTES
+
+print("=" * 60)
+print("🚀 INICIANDO CRIAÇÃO DE SUPERUSUÁRIO")
+print("=" * 60)
 
 try:
-    # Verificar se já existe
-    if User.objects.filter(username=username).exists():
-        user = User.objects.get(username=username)
-        print("⚠️  Usuário já existe!")
-        print(f"👤 Username: {user.username}")
-        print(f"📧 Email: {user.email}")
-        print(f"🔐 É superusuário: {user.is_superuser}")
-        
-        # Atualizar para garantir que é superusuário
-        if not user.is_superuser:
-            user.is_superuser = True
-            user.is_staff = True
-            user.set_password(password)
-            user.save()
-            print("✅ Atualizado para superusuário!")
-    else:
-        # Criar novo superusuário
-        user = User.objects.create_superuser(
-            username=username,
-            email=email,
-            password=password
-        )
-        print("=" * 60)
-        print("🎉 SUPERUSUÁRIO CRIADO COM SUCESSO!")
-        print("=" * 60)
-        print(f"👤 Username: {username}")
-        print(f"📧 Email: {email}")
-        print(f"🔑 Senha: {password}")
-        print("=" * 60)
-        print("🌐 Acesse: https://olharliterario-production.up.railway.app/admin")
-        print("=" * 60)
-        
+    # SEMPRE deletar usuários admin existentes para garantir senha correta
+    deleted_count = User.objects.filter(username=username).delete()[0]
+    if deleted_count > 0:
+        print(f"🗑️  Deletados {deleted_count} usuário(s) 'admin' existente(s)")
+    
+    # Criar novo superusuário com senha garantida
+    user = User.objects.create_superuser(
+        username=username,
+        email=email,
+        password=password
+    )
+    
+    print("=" * 60)
+    print("🎉 SUPERUSUÁRIO CRIADO COM SUCESSO!")
+    print("=" * 60)
+    print(f"👤 Username: {username}")
+    print(f"📧 Email: {email}")
+    print(f"🔑 Senha: {password}")
+    print(f"✅ is_superuser: {user.is_superuser}")
+    print(f"✅ is_staff: {user.is_staff}")
+    print("=" * 60)
+    print("🌐 Acesse: https://olharliterario-production.up.railway.app/admin")
+    print("=" * 60)
+    
 except Exception as e:
-    print(f"❌ Erro ao criar superusuário: {e}")
+    print("=" * 60)
+    print(f"❌ ERRO AO CRIAR SUPERUSUÁRIO: {e}")
+    print("=" * 60)
+    import traceback
+    traceback.print_exc()
     sys.exit(1)
