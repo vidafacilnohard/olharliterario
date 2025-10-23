@@ -18,8 +18,9 @@ class BookAdmin(admin.ModelAdmin):
         ('Detalhes', {
             'fields': ('genero', 'idioma', 'paginas', 'sinopse')
         }),
-        ('Capa', {
-            'fields': ('capa',)
+        ('Capa do Livro', {
+            'fields': ('capa_url', 'capa'),
+            'description': 'Opção 1: Cole o link do Google Drive OU Opção 2: Faça upload da imagem'
         }),
         ('Status', {
             'fields': ('disponivel', 'destaque', 'data_cadastro')
