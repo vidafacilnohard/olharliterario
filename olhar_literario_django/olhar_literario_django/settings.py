@@ -132,8 +132,9 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Arquivos estáticos do frontend (HTML, CSS, JS)
+# IMPORTANTE: Não incluir BASE_DIR.parent para evitar loop infinito com staticfiles
 STATICFILES_DIRS = [
-    BASE_DIR.parent,  # Raiz do projeto (index.html, script.js, style.css, logo.png)
+    BASE_DIR.parent / 'images',  # Apenas a pasta images
 ]
 
 # Media files (uploads de usuários - fotos de perfil)
@@ -162,5 +163,7 @@ CSRF_TRUSTED_ORIGINS = [
     'https://*.railway.app',  # Permitir domínios do Railway
 ]
 
-# Configuração do WhiteNoise para arquivos estáticos
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Configuração do WhiteNoise para arquivos estáticos (SIMPLIFICADO)
+# Usar configuração básica para evitar problemas com collectstatic
+if not DEBUG:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
