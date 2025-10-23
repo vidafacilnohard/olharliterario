@@ -255,6 +255,28 @@ Antes de considerar concluído, verifique:
 
 ## 🆘 PROBLEMAS COMUNS
 
+### ❌ Erro: "Application failed to respond"
+**Causa:** O servidor não está respondendo às requisições HTTP.
+
+**Soluções:**
+1. **Verificar os logs:**
+   - Vá em "Deployments" → Clique no deploy ativo
+   - Role até o final dos logs
+   - Procure por erros como "ModuleNotFoundError", "ImportError", etc.
+
+2. **Testar o health check:**
+   - Acesse: `https://seu-dominio.railway.app/health`
+   - Se retornar `{"status": "ok"}`, o Django está funcionando
+   - Se não responder, verifique se o gunicorn iniciou nos logs
+
+3. **Verificar variáveis de ambiente:**
+   - Confirme que `SECRET_KEY`, `DEBUG=False` e `DATABASE_URL` estão configuradas
+   - Vá em "Variables" e verifique todas as variáveis
+
+4. **Forçar redeploy:**
+   - Settings → Service → Redeploy
+   - Aguarde 2-3 minutos
+
 ### ❌ Erro: "DATABASE_URL not found"
 **Solução:** Verifique se você referenciou o Postgres corretamente na variável `DATABASE_URL` da aplicação.
 
