@@ -155,4 +155,9 @@ class GitHubMediaStorage(GitHubStorage):
     Storage específico para arquivos de mídia (capas de livros, fotos de perfil)
     Usa GitHub como CDN - arquivos são servidos direto do repositório
     """
-    pass
+    def deconstruct(self):
+        """
+        Permite que o Django serialize este storage em migrations
+        """
+        return ('books.storage.GitHubMediaStorage', [], {})
+

@@ -389,7 +389,7 @@ def api_books(request):
             'isbn': book.isbn or '',
             'genero': book.genero or '',
             'sinopse': book.sinopse or '',
-            'capa': book.capa.url if book.capa else None,
+            'capa': book.capa.url if book.capa else (book.capa_url if book.capa_url else None),
             'paginas': book.paginas,
             'idioma': book.idioma,
             'disponivel': book.disponivel,

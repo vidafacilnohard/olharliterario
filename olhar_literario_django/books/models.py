@@ -21,12 +21,19 @@ class Book(models.Model):
     isbn = models.CharField(max_length=13, blank=True, null=True, unique=True, verbose_name='ISBN')
     genero = models.CharField(max_length=100, blank=True, null=True, verbose_name='Gênero')
     sinopse = models.TextField(blank=True, null=True, verbose_name='Sinopse')
+    capa_url = models.URLField(
+        max_length=500,
+        blank=True,
+        null=True,
+        verbose_name='Link da Capa (Google Drive)',
+        help_text='Cole o link do Google Drive no formato: https://drive.google.com/uc?export=view&id=SEU_ID'
+    )
     capa = models.ImageField(
         upload_to='book_covers/', 
         blank=True, 
         null=True, 
-        verbose_name='Capa',
-        storage=github_storage  # Usar storage que faz commit automático
+        verbose_name='Capa (Upload - Opcional)',
+        help_text='Deixe em branco se usar o link do Google Drive acima'
     )
     paginas = models.IntegerField(blank=True, null=True, verbose_name='Número de Páginas')
     idioma = models.CharField(max_length=50, default='Português', verbose_name='Idioma')
@@ -46,6 +53,14 @@ class Book(models.Model):
     
     def __str__(self):
         return f'{self.titulo} - {self.autor}'
+    
+    def get_capa_url(self):
+        """Retorna a URL da capa (upload ou URL externa)"""
+        if self.capa:
+            return self.capa.url
+        elif self.capa_url:
+            return self.capa_url
+        return None
     
     def media_avaliacoes(self):
         """Retorna a média das avaliações do livro"""
