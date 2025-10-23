@@ -26,7 +26,7 @@ class Book(models.Model):
         blank=True,
         null=True,
         verbose_name='Link da Capa (Google Drive)',
-        help_text='Cole o link do Google Drive no formato: https://drive.google.com/uc?export=view&id=SEU_ID'
+        help_text='Cole o link compartilhado do Google Drive (será convertido automaticamente). Ex: https://drive.google.com/file/d/ABC123/view'
     )
     capa = models.ImageField(
         upload_to='book_covers/', 
@@ -59,8 +59,27 @@ class Book(models.Model):
         if self.capa:
             return self.capa.url
         elif self.capa_url:
+            # Converter link do Google Drive automaticamente
+            if 'drive.google.com' in self.capa_url:
+                # Extrair ID do link do Google Drive
+                if '/file/d/' in self.capa_url:
+                    # Link formato: https://drive.google.com/file/d/ID/view
+                    file_id = self.capa_url.split('/file/d/')[1].split('/')[0]
+                    return f'https://drive.google.com/uc?export=view&id={file_id}'
+                elif 'id=' in self.capa_url:
+                    # Já está no formato correto
+                    return self.capa_url
             return self.capa_url
         return None
+    
+    def save(self, *args, **kwargs):
+        """Salvar e normalizar URL do Google Drive"""
+        if self.capa_url and 'drive.google.com' in self.capa_url:
+            # Converter automaticamente ao salvar
+            if '/file/d/' in self.capa_url and 'uc?export=view' not in self.capa_url:
+                file_id = self.capa_url.split('/file/d/')[1].split('/')[0]
+                self.capa_url = f'https://drive.google.com/uc?export=view&id={file_id}'
+        super().save(*args, **kwargs)
     
     def media_avaliacoes(self):
         """Retorna a média das avaliações do livro"""
