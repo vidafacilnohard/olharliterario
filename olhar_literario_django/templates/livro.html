@@ -439,9 +439,6 @@
             // Usar capa da API (que já vem com get_capa_url()) ou placeholder
             const capaUrl = livro.capa || 'https://via.placeholder.com/300x450/ff8b7e/ffffff?text=' + encodeURIComponent(livro.titulo);
             
-            console.log('[DEBUG] Dados do livro:', livro);
-            console.log('[DEBUG] URL da capa:', capaUrl);
-            
             // Verificar se usuário está logado
             const token = localStorage.getItem('authToken');
             const estaLogado = !!token;

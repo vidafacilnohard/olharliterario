@@ -55,29 +55,33 @@ class Book(models.Model):
         return f'{self.titulo} - {self.autor}'
     
     def get_capa_url(self):
-        """Retorna a URL da capa (upload ou URL externa)"""
+        """
+        Retorna a URL da capa do livro.
+        Prioridade: 1) Upload (capa), 2) URL externa (capa_url)
+        Converte automaticamente links do Google Drive para formato otimizado
+        """
         if self.capa:
             return self.capa.url
         elif self.capa_url:
-            # Converter link do Google Drive automaticamente
+            # Converter link do Google Drive automaticamente para thumbnail API
             if 'drive.google.com' in self.capa_url:
-                # Extrair ID do link do Google Drive
                 file_id = None
+                
+                # Extrair ID do link (suporta vários formatos)
                 if '/file/d/' in self.capa_url:
-                    # Link formato: https://drive.google.com/file/d/ID/view
+                    # Formato: https://drive.google.com/file/d/ID/view
                     file_id = self.capa_url.split('/file/d/')[1].split('/')[0]
                 elif 'id=' in self.capa_url:
-                    # Link formato: https://drive.google.com/uc?export=view&id=ID
+                    # Formato: https://drive.google.com/uc?export=view&id=ID
                     file_id = self.capa_url.split('id=')[1].split('&')[0]
                 
                 if file_id:
-                    # Usar drive.usercontent.com que é melhor para embed
-                    converted_url = f'https://drive.google.com/thumbnail?id={file_id}&sz=w1000'
-                    print(f"[DEBUG] Convertendo link do Google Drive: {self.capa_url} -> {converted_url}")
-                    return converted_url
-            print(f"[DEBUG] Retornando capa_url direto: {self.capa_url}")
+                    # Usar thumbnail API (melhor para embed, mais rápido)
+                    return f'https://drive.google.com/thumbnail?id={file_id}&sz=w1000'
+            
+            # Retornar URL direta se não for Google Drive
             return self.capa_url
-        print(f"[DEBUG] Livro '{self.titulo}' não tem capa configurada")
+        
         return None
     
     def save(self, *args, **kwargs):

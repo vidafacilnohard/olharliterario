@@ -31,20 +31,6 @@ def health_check(request):
     except Exception as e:
         db_status = f"error: {str(e)}"
     
-    # Debug: Verificar se campo capa_url existe
-    try:
-        hobbit = Book.objects.filter(titulo__icontains='hobbit').first()
-        capa_debug = {
-            'has_hobbit': hobbit is not None,
-            'titulo': hobbit.titulo if hobbit else None,
-            'has_capa': bool(hobbit.capa) if hobbit else False,
-            'has_capa_url': bool(hobbit.capa_url) if hobbit else False,
-            'capa_url_value': hobbit.capa_url if hobbit else None,
-            'get_capa_url': hobbit.get_capa_url() if hobbit else None
-        }
-    except Exception as e:
-        capa_debug = {'error': str(e)}
-    
     return JsonResponse({
         'status': 'ok',
         'message': 'Django está funcionando!',
@@ -53,7 +39,6 @@ def health_check(request):
             'type': db_type,
             'status': db_status
         },
-        'capa_debug': capa_debug,
         'templates_dir': str(settings.BASE_DIR / 'templates')
     })
 
