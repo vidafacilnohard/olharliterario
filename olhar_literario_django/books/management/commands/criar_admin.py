@@ -5,12 +5,17 @@ Uso: python manage.py criar_admin
 
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
+import sys
 
 
 class Command(BaseCommand):
     help = 'Cria um superusuário admin automaticamente'
 
     def handle(self, *args, **options):
+        print("=" * 60, file=sys.stderr)
+        print("🔧 EXECUTANDO COMANDO criar_admin", file=sys.stderr)
+        print("=" * 60, file=sys.stderr)
+        
         User = get_user_model()
         
         username = 'admin'
@@ -50,4 +55,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS('🌐 Acesse: https://olharliterario-production.up.railway.app/admin'))
                 
         except Exception as e:
+            print(f"❌ ERRO AO CRIAR SUPERUSUÁRIO: {e}", file=sys.stderr)
             self.stdout.write(self.style.ERROR(f'❌ Erro: {e}'))
+            import traceback
+            traceback.print_exc()
