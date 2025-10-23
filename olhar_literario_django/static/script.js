@@ -92,10 +92,14 @@ async function carregarLivrosDjango() {
                 stars = `<div class="book-rating">${stars} (${livro.total_avaliacoes})</div>`;
             }
             
+            const placeholderUrl = 'https://via.placeholder.com/300x450/ff8b7e/ffffff?text=' + encodeURIComponent(livro.titulo);
+            
             card.innerHTML = `
                 <div class="bookmark"></div>
                 <div class="book-cover">
-                    <img src="${capaUrl}" alt="${livro.titulo}" onerror="this.src='https://via.placeholder.com/300x450/ff8b7e/ffffff?text=${encodeURIComponent(livro.titulo)}'">
+                    <img src="${capaUrl}" alt="${livro.titulo}" 
+                         data-fallback="${placeholderUrl}"
+                         style="opacity: 1; transition: opacity 0.5s;">
                 </div>
                 <div class="book-info">
                     <h3 class="book-title">${livro.titulo}</h3>
@@ -105,6 +109,15 @@ async function carregarLivrosDjango() {
                     <button class="abrir-btn" onclick="event.stopPropagation(); window.location.href='livro.html?id=${livro.id}'">Abrir</button>
                 </div>
             `;
+            
+            // Adicionar onerror após o elemento ser criado
+            const img = card.querySelector('.book-cover img');
+            if (img) {
+                img.onerror = function() {
+                    this.onerror = null;
+                    this.src = this.dataset.fallback;
+                };
+            }
             
             grid.appendChild(card);
         });
