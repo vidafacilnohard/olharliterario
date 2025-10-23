@@ -65,11 +65,16 @@ class Book(models.Model):
                 if '/file/d/' in self.capa_url:
                     # Link formato: https://drive.google.com/file/d/ID/view
                     file_id = self.capa_url.split('/file/d/')[1].split('/')[0]
-                    return f'https://drive.google.com/uc?export=view&id={file_id}'
+                    converted_url = f'https://drive.google.com/uc?export=view&id={file_id}'
+                    print(f"[DEBUG] Convertendo link do Google Drive: {self.capa_url} -> {converted_url}")
+                    return converted_url
                 elif 'id=' in self.capa_url:
                     # Já está no formato correto
+                    print(f"[DEBUG] Link do Google Drive já convertido: {self.capa_url}")
                     return self.capa_url
+            print(f"[DEBUG] Retornando capa_url direto: {self.capa_url}")
             return self.capa_url
+        print(f"[DEBUG] Livro '{self.titulo}' não tem capa configurada")
         return None
     
     def save(self, *args, **kwargs):
